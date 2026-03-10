@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Amit's Logbook — Tech & Travel</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink: #1A1210;
+  --warm: #F5EFE6;
+  --paper: #FDFAF6;
+  --rust: #C4572A;
+  --gold: #D4A827;
+  --forest: #2D5016;
+  --sky: #2B6CB0;
+  --muted: #7A6E65;
+  --border: #E8DDD0;
+  --card: #FFFFFF;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body {
+  font-family:'DM Sans',sans-serif;
+  background:var(--paper);
+  color:var(--ink);
+  overflow-x:hidden;
+}
+
+/* SCROLLBAR */
+::-webkit-scrollbar{width:6px;}
+::-webkit-scrollbar-track{background:var(--warm);}
+::-webkit-scrollbar-thumb{background:var(--rust);border-radius:3px;}
+
+/* NAV */
+nav {
+  position:fixed; top:0; width:100%; z-index:500;
+  background:rgba(253,250,246,0.95); backdrop-filter:blur(16px);
+  border-bottom:1px solid var(--border);
+  padding:0 60px; height:68px;
+  display:flex; align-items:center; justify-content:space-between;
+}
+.nav-brand {
+  font-family:'Playfair Display',serif; font-size:22px; font-weight:700;
+  color:var(--ink); text-decoration:none; letter-spacing:-0.5px;
+}
+.nav-brand span { color:var(--rust); }
+.nav-links { display:flex; gap:32px; list-style:none; align-items:center; }
+.nav-links a {
+  font-size:14px; font-weight:500; color:var(--muted);
+  text-decoration:none; transition:color 0.2s;
+  letter-spacing:0.3px;
+}
+.nav-links a:hover { color:var(--rust); }
+.nav-write {
+  background:var(--ink); color:var(--warm)!important;
+  padding:8px 20px; border-radius:4px; font-size:13px!important;
+  transition:background 0.2s!important;
+}
+.nav-write:hover { background:var(--rust)!important; color:white!important; }
+
+/* HERO */
+.hero {
+  min-height:100vh; padding:130px 60px 80px;
+  display:grid; grid-template-columns:1fr 1fr;
+  align-items:center; gap:80px;
+  background: linear-gradient(135deg, var(--warm) 0%, var(--paper) 60%);
+  position:relative; overflow:hidden;
+}
+.hero::before {
+  content:''; position:absolute; top:-100px; right:-100px;
+  width:500px; height:500px; border-radius:50%;
+  background: radial-gradient(circle, rgba(196,87,42,0.07), transparent 70%);
+  pointer-events:none;
+}
+.hero-eyebrow {
+  display:inline-flex; align-items:center; gap:8px;
+  font-family:'DM Mono',monospace; font-size:12px;
+  color:var(--rust); letter-spacing:2px; text-transform:uppercase;
+  margin-bottom:24px;
+}
+.hero-eyebrow::before { content:''; width:24px; height:2px; background:var(--rust); }
+.hero-title {
+  font-family:'Playfair Display',serif; font-weight:900;
+  font-size:clamp(42px,6vw,72px); line-height:1.05;
+  letter-spacing:-2px; margin-bottom:24px; color:var(--ink);
+}
+.hero-title em { color:var(--rust); font-style:italic; }
+.hero-sub {
+  font-size:17px; color:var(--muted); line-height:1.7;
+  max-width:440px; margin-bottom:40px;
+}
+.hero-meta {
+  display:flex; gap:32px; margin-bottom:40px;
+}
+.hero-meta-item { text-align:center; }
+.hero-meta-num {
+  font-family:'Playfair Display',serif; font-size:36px;
+  font-weight:700; color:var(--ink); line-height:1;
+}
+.hero-meta-label {
+  font-family:'DM Mono',monospace; font-size:11px;
+  color:var(--muted); letter-spacing:1px; text-transform:uppercase; margin-top:4px;
+}
+.hero-cta { display:flex; gap:14px; flex-wrap:wrap; }
+.btn-read {
+  background:var(--rust); color:white;
+  padding:13px 28px; border-radius:4px;
+  font-size:14px; font-weight:500; text-decoration:none;
+  transition:all 0.2s; letter-spacing:0.3px;
+}
+.btn-read:hover { background:#a3451f; box-shadow:0 6px 20px rgba(196,87,42,0.3); transform:translateY(-1px); }
+.btn-secondary {
+  background:transparent; color:var(--ink);
+  padding:13px 28px; border-radius:4px; border:1.5px solid var(--border);
+  font-size:14px; font-weight:500; text-decoration:none;
+  transition:all 0.2s;
+}
+.btn-secondary:hover { border-color:var(--rust); color:var(--rust); }
+
+/* HERO VISUAL */
+.hero-visual { position:relative; }
+.featured-post-card {
+  background:var(--card); border:1px solid var(--border);
+  border-radius:12px; overflow:hidden;
+  box-shadow:0 20px 60px rgba(0,0,0,0.1);
+  transform:rotate(1.5deg);
+  transition:transform 0.3s;
+}
+.featured-post-card:hover { transform:rotate(0deg) translateY(-4px); }
+.fpc-img {
+  width:100%; height:240px; object-fit:cover;
+  background:linear-gradient(135deg, #2D5016 0%, #4A7C29 40%, #8BC34A 100%);
+  display:flex; align-items:center; justify-content:center;
+  font-size:80px; position:relative; overflow:hidden;
+}
+.fpc-img::after {
+  content:'FEATURED'; position:absolute; top:20px; left:20px;
+  background:var(--rust); color:white;
+  font-family:'DM Mono',monospace; font-size:10px; letter-spacing:2px;
+  padding:4px 12px; border-radius:2px;
+}
+.fpc-body { padding:24px; }
+.fpc-cat {
+  font-family:'DM Mono',monospace; font-size:11px;
+  color:var(--forest); letter-spacing:2px; text-transform:uppercase; margin-bottom:8px;
+}
+.fpc-title {
+  font-family:'Playfair Display',serif; font-size:22px;
+  font-weight:700; color:var(--ink); line-height:1.3; margin-bottom:10px;
+}
+.fpc-meta {
+  display:flex; gap:16px; align-items:center;
+  font-family:'DM Mono',monospace; font-size:11px; color:var(--muted);
+}
+
+/* POST WRITE AREA */
+.write-section {
+  padding:80px 60px; background:var(--ink); color:var(--warm);
+}
+.write-inner { max-width:800px; margin:0 auto; text-align:center; }
+.write-tag {
+  font-family:'DM Mono',monospace; font-size:11px;
+  color:var(--gold); letter-spacing:3px; text-transform:uppercase; margin-bottom:16px;
+}
+.write-title {
+  font-family:'Playfair Display',serif; font-size:clamp(28px,4vw,44px);
+  font-weight:900; line-height:1.2; margin-bottom:16px;
+  color:var(--warm);
+}
+.write-title span { color:var(--gold); font-style:italic; }
+.write-sub { font-size:15px; color:rgba(245,239,230,0.6); margin-bottom:40px; line-height:1.7; }
+
+/* COMPOSE EDITOR */
+.editor-wrap {
+  background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.1);
+  border-radius:10px; padding:32px; text-align:left;
+}
+.editor-toolbar {
+  display:flex; gap:8px; margin-bottom:20px; flex-wrap:wrap;
+  padding-bottom:16px; border-bottom:1px solid rgba(255,255,255,0.08);
+}
+.toolbar-btn {
+  background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.1);
+  color:rgba(245,239,230,0.7); padding:6px 12px; border-radius:4px;
+  font-family:'DM Mono',monospace; font-size:12px; cursor:pointer;
+  transition:all 0.2s;
+}
+.toolbar-btn:hover { background:var(--rust); color:white; border-color:var(--rust); }
+.editor-title {
+  width:100%; background:transparent; border:none; outline:none;
+  font-family:'Playfair Display',serif; font-size:28px; font-weight:700;
+  color:var(--warm); margin-bottom:16px; placeholder-color:rgba(245,239,230,0.3);
+}
+.editor-title::placeholder { color:rgba(245,239,230,0.2); }
+.editor-body {
+  width:100%; background:transparent; border:none; outline:none;
+  font-family:'DM Sans',sans-serif; font-size:15px;
+  color:rgba(245,239,230,0.7); line-height:1.8; resize:none; min-height:180px;
+}
+.editor-body::placeholder { color:rgba(245,239,230,0.2); }
+.editor-footer {
+  display:flex; justify-content:space-between; align-items:center;
+  padding-top:16px; border-top:1px solid rgba(255,255,255,0.08); margin-top:16px; flex-wrap:wrap; gap:12px;
+}
+.cat-select {
+  background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.1);
+  color:rgba(245,239,230,0.7); padding:8px 14px; border-radius:4px;
+  font-family:'DM Mono',monospace; font-size:12px; outline:none;
+}
+.publish-btn {
+  background:var(--rust); color:white; border:none;
+  padding:10px 28px; border-radius:4px; font-size:14px; font-weight:500;
+  cursor:pointer; transition:all 0.2s;
+}
+.publish-btn:hover { background:#a3451f; box-shadow:0 6px 20px rgba(196,87,42,0.4); }
+
+/* BLOG GRID */
+.blog-section { padding:80px 60px; }
+.blog-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:48px; flex-wrap:wrap; gap:16px; }
+.blog-title {
+  font-family:'Playfair Display',serif; font-size:clamp(28px,4vw,40px);
+  font-weight:700; color:var(--ink);
+}
+.filter-tabs { display:flex; gap:8px; flex-wrap:wrap; }
+.filter-tab {
+  padding:7px 18px; border-radius:30px;
+  font-family:'DM Mono',monospace; font-size:12px; letter-spacing:0.5px;
+  border:1px solid var(--border); color:var(--muted); cursor:pointer;
+  transition:all 0.2s; background:transparent;
+}
+.filter-tab.active, .filter-tab:hover {
+  background:var(--rust); color:white; border-color:var(--rust);
+}
+.blog-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:28px; }
+.blog-card {
+  background:var(--card); border:1px solid var(--border); border-radius:10px;
+  overflow:hidden; transition:all 0.3s; cursor:pointer;
+}
+.blog-card:hover { transform:translateY(-6px); box-shadow:0 16px 40px rgba(0,0,0,0.1); border-color:var(--rust); }
+.blog-img {
+  width:100%; height:200px; object-fit:cover;
+  display:flex; align-items:center; justify-content:center; font-size:64px;
+}
+.blog-body { padding:24px; }
+.blog-cat {
+  display:inline-block; font-family:'DM Mono',monospace; font-size:10px;
+  letter-spacing:2px; text-transform:uppercase; padding:3px 10px;
+  border-radius:3px; margin-bottom:12px; font-weight:500;
+}
+.cat-travel { background:rgba(45,80,22,0.1); color:var(--forest); }
+.cat-tech { background:rgba(43,108,176,0.1); color:var(--sky); }
+.cat-life { background:rgba(196,87,42,0.1); color:var(--rust); }
+.blog-card-title {
+  font-family:'Playfair Display',serif; font-size:19px; font-weight:700;
+  color:var(--ink); line-height:1.3; margin-bottom:10px;
+}
+.blog-excerpt { font-size:13px; color:var(--muted); line-height:1.7; margin-bottom:16px; }
+.blog-meta {
+  display:flex; justify-content:space-between; align-items:center;
+  padding-top:14px; border-top:1px solid var(--border);
+  font-family:'DM Mono',monospace; font-size:11px; color:var(--muted);
+}
+.read-time { color:var(--rust); font-weight:500; }
+
+/* ABOUT STRIP */
+.about-strip {
+  padding:80px 60px;
+  background:linear-gradient(135deg, var(--ink) 0%, #2D1810 100%);
+  display:grid; grid-template-columns:1fr 1fr; gap:80px; align-items:center;
+}
+.about-left .about-tag {
+  font-family:'DM Mono',monospace; font-size:11px;
+  color:var(--gold); letter-spacing:3px; text-transform:uppercase; margin-bottom:16px;
+}
+.about-left h2 {
+  font-family:'Playfair Display',serif; font-size:clamp(28px,4vw,44px);
+  font-weight:900; color:var(--warm); line-height:1.2; margin-bottom:20px;
+}
+.about-left h2 em { color:var(--gold); font-style:italic; }
+.about-left p { font-size:15px; color:rgba(245,239,230,0.65); line-height:1.8; margin-bottom:16px; }
+.about-chips { display:flex; flex-wrap:wrap; gap:8px; margin-top:24px; }
+.about-chip {
+  padding:6px 16px; border:1px solid rgba(245,239,230,0.15);
+  border-radius:30px; font-family:'DM Mono',monospace; font-size:12px;
+  color:rgba(245,239,230,0.5); transition:all 0.2s;
+}
+.about-chip:hover { border-color:var(--gold); color:var(--gold); }
+.about-right { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+.about-card {
+  background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08);
+  border-radius:8px; padding:24px; text-align:center; transition:all 0.3s;
+}
+.about-card:hover { border-color:var(--gold); background:rgba(212,168,39,0.05); }
+.about-card-icon { font-size:32px; margin-bottom:12px; }
+.about-card-num {
+  font-family:'Playfair Display',serif; font-size:32px; font-weight:700;
+  color:var(--gold); line-height:1;
+}
+.about-card-label { font-family:'DM Mono',monospace; font-size:11px; color:rgba(245,239,230,0.4); margin-top:4px; letter-spacing:1px; }
+
+/* NEWSLETTER */
+.newsletter {
+  padding:80px 60px; text-align:center;
+  background: var(--warm); border-top:1px solid var(--border);
+}
+.nl-label { font-family:'DM Mono',monospace; font-size:11px; color:var(--rust); letter-spacing:3px; text-transform:uppercase; margin-bottom:16px; }
+.nl-title { font-family:'Playfair Display',serif; font-size:clamp(28px,4vw,44px); font-weight:900; color:var(--ink); margin-bottom:12px; }
+.nl-sub { font-size:15px; color:var(--muted); margin-bottom:36px; }
+.nl-form { display:flex; gap:0; max-width:480px; margin:0 auto; }
+.nl-input {
+  flex:1; border:1.5px solid var(--border); border-right:none;
+  padding:14px 20px; font-family:'DM Sans',sans-serif; font-size:14px;
+  background:white; outline:none; border-radius:4px 0 0 4px; color:var(--ink);
+}
+.nl-input:focus { border-color:var(--rust); }
+.nl-btn {
+  background:var(--rust); color:white; border:none;
+  padding:14px 28px; font-size:14px; font-weight:500;
+  cursor:pointer; border-radius:0 4px 4px 0; transition:background 0.2s; white-space:nowrap;
+}
+.nl-btn:hover { background:#a3451f; }
+
+/* FOOTER */
+footer {
+  background:var(--ink); color:var(--warm);
+  padding:60px; display:grid;
+  grid-template-columns:2fr 1fr 1fr;
+  gap:48px;
+}
+.footer-brand h3 {
+  font-family:'Playfair Display',serif; font-size:22px; font-weight:700;
+  margin-bottom:12px;
+}
+.footer-brand h3 span { color:var(--rust); }
+.footer-brand p { font-size:13px; color:rgba(245,239,230,0.45); line-height:1.7; max-width:260px; }
+.footer-col h4 { font-family:'DM Mono',monospace; font-size:11px; letter-spacing:3px; text-transform:uppercase; color:var(--gold); margin-bottom:20px; }
+.footer-col ul { list-style:none; }
+.footer-col li { margin-bottom:10px; }
+.footer-col a { font-size:13px; color:rgba(245,239,230,0.4); text-decoration:none; transition:color 0.2s; }
+.footer-col a:hover { color:var(--warm); }
+.footer-bottom {
+  background:rgba(0,0,0,0.3); padding:20px 60px;
+  display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;
+}
+.footer-bottom p { font-family:'DM Mono',monospace; font-size:11px; color:rgba(245,239,230,0.3); }
+
+/* TOAST */
+.toast {
+  position:fixed; bottom:28px; left:50%; transform:translateX(-50%) translateY(80px);
+  background:var(--ink); color:var(--warm); padding:12px 24px; border-radius:6px;
+  font-size:14px; z-index:9999; transition:transform 0.4s cubic-bezier(0.34,1.56,0.64,1);
+  border-left:3px solid var(--rust); box-shadow:0 8px 30px rgba(0,0,0,0.3);
+}
+.toast.show { transform:translateX(-50%) translateY(0); }
+
+/* MODAL */
+.modal-overlay {
+  position:fixed; inset:0; background:rgba(26,18,16,0.8); z-index:2000;
+  opacity:0; pointer-events:none; transition:opacity 0.3s;
+  display:flex; align-items:center; justify-content:center; padding:20px;
+  backdrop-filter:blur(8px);
+}
+.modal-overlay.open { opacity:1; pointer-events:all; }
+.modal {
+  background:var(--paper); border:1px solid var(--border); border-radius:14px;
+  max-width:680px; width:100%; max-height:90vh; overflow-y:auto;
+  transform:scale(0.92); transition:transform 0.3s;
+}
+.modal-overlay.open .modal { transform:scale(1); }
+.modal-body { padding:48px; }
+.modal-tag { font-family:'DM Mono',monospace; font-size:11px; letter-spacing:2px; text-transform:uppercase; color:var(--rust); margin-bottom:12px; }
+.modal-title { font-family:'Playfair Display',serif; font-size:32px; font-weight:700; color:var(--ink); margin-bottom:16px; line-height:1.2; }
+.modal-meta { display:flex; gap:20px; font-family:'DM Mono',monospace; font-size:12px; color:var(--muted); margin-bottom:32px; flex-wrap:wrap; }
+.modal-content p { font-size:15px; color:var(--muted); line-height:1.8; margin-bottom:16px; }
+.modal-close-btn {
+  background:var(--rust); color:white; border:none; padding:12px 28px;
+  border-radius:4px; font-size:14px; font-weight:500; cursor:pointer; margin-top:24px; transition:background 0.2s;
+}
+.modal-close-btn:hover { background:#a3451f; }
+
+/* RESPONSIVE */
+@media(max-width:1024px){
+  .blog-grid{grid-template-columns:repeat(2,1fr);}
+  .hero{grid-template-columns:1fr; padding:130px 40px 60px;}
+  .hero-visual{display:none;}
+  footer{grid-template-columns:1fr 1fr;}
+}
+@media(max-width:768px){
+  nav{padding:0 20px;}
+  .nav-links li:not(:last-child){display:none;}
+  .hero{padding:110px 24px 60px;}
+  .blog-section,.about-strip,.write-section,.newsletter,.blog-section{padding:60px 24px;}
+  footer{grid-template-columns:1fr;padding:40px 24px;}
+  .footer-bottom{padding:16px 24px;}
+  .blog-grid{grid-template-columns:1fr;}
+  .about-strip{grid-template-columns:1fr;}
+  .nl-form{flex-direction:column;}
+  .nl-input,.nl-btn{border-radius:4px;border-right:1.5px solid var(--border);}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="#home" class="nav-brand">Amit's <span>Logbook</span></a>
+  <ul class="nav-links">
+    <li><a href="#blogs">Travel</a></li>
+    <li><a href="#blogs">Tech</a></li>
+    <li><a href="#about">About</a></li>
+    <li><a href="https://github.com/iitamit" target="_blank">GitHub ↗</a></li>
+    <li><a href="https://www.linkedin.com/in/amit-kumar-dash-638099271" target="_blank">LinkedIn ↗</a></li>
+    <li><a href="#write" class="nav-write">✍ Write</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero" id="home">
+  <div class="hero-left">
+    <div class="hero-eyebrow">DISPATCHES FROM THE ROAD & CODE</div>
+    <h1 class="hero-title">Where <em>wanderlust</em><br>meets the<br>digital frontier.</h1>
+    <p class="hero-sub">I'm Amit — a developer from Bhubaneswar who chases both commit logs and mountain horizons. This is my journal of travels, tech experiments, and everything in between.</p>
+    <div class="hero-meta">
+      <div class="hero-meta-item">
+        <div class="hero-meta-num" id="postCount">6</div>
+        <div class="hero-meta-label">Articles</div>
+      </div>
+      <div class="hero-meta-item">
+        <div class="hero-meta-num">3</div>
+        <div class="hero-meta-label">Categories</div>
+      </div>
+      <div class="hero-meta-item">
+        <div class="hero-meta-num">∞</div>
+        <div class="hero-meta-label">Stories</div>
+      </div>
+    </div>
+    <div class="hero-cta">
+      <a href="#blogs" class="btn-read">Read Latest Posts</a>
+      <a href="#write" class="btn-secondary">Write a Post</a>
+    </div>
+  </div>
+  <div class="hero-visual">
+    <div class="featured-post-card">
+      <div class="fpc-img">🌄</div>
+      <div class="fpc-body">
+        <div class="fpc-cat">Travel · Odisha</div>
+        <div class="fpc-title">Lost in Puri: Where the Sea Meets the Soul</div>
+        <div class="fpc-meta">
+          <span>Amit Dash</span>
+          <span>·</span>
+          <span>Mar 2025</span>
+          <span>·</span>
+          <span>5 min read</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- BLOG SECTION -->
+<section class="blog-section" id="blogs">
+  <div class="blog-header">
+    <h2 class="blog-title">Latest Posts</h2>
+    <div class="filter-tabs">
+      <button class="filter-tab active" onclick="filterPosts('all', this)">All</button>
+      <button class="filter-tab" onclick="filterPosts('travel', this)">✈️ Travel</button>
+      <button class="filter-tab" onclick="filterPosts('tech', this)">💻 Tech</button>
+      <button class="filter-tab" onclick="filterPosts('life', this)">🌿 Life</button>
+    </div>
+  </div>
+  <div class="blog-grid" id="blogGrid"></div>
+</section>
+
+<!-- WRITE SECTION -->
+<section class="write-section" id="write">
+  <div class="write-inner">
+    <div class="write-tag">// YOUR STORY MATTERS</div>
+    <h2 class="write-title">Ready to share your<br><span>next adventure</span>?</h2>
+    <p class="write-sub">Drop your thoughts here — whether it's a weekend escape to Chilika Lake, a debugging session at 2 AM, or a life lesson from the road.</p>
+    <div class="editor-wrap">
+      <div class="editor-toolbar">
+        <button class="toolbar-btn" onclick="formatText('title')">H1</button>
+        <button class="toolbar-btn" onclick="formatText('bold')"><b>B</b></button>
+        <button class="toolbar-btn" onclick="formatText('italic')"><i>I</i></button>
+        <button class="toolbar-btn" onclick="formatText('quote')">❝</button>
+        <button class="toolbar-btn" onclick="formatText('code')">{ }</button>
+        <button class="toolbar-btn" onclick="formatText('list')">☰</button>
+      </div>
+      <input type="text" class="editor-title" id="postTitle" placeholder="Your post title...">
+      <textarea class="editor-body" id="postBody" placeholder="Start writing your story... What did you see? What did you build? What did you learn?"></textarea>
+      <div class="editor-footer">
+        <select class="cat-select" id="postCat">
+          <option value="travel">✈️ Travel</option>
+          <option value="tech">💻 Tech</option>
+          <option value="life">🌿 Life</option>
+        </select>
+        <button class="publish-btn" onclick="publishPost()">Publish Post →</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section class="about-strip" id="about">
+  <div class="about-left">
+    <div class="about-tag">// BEHIND THE KEYBOARD</div>
+    <h2>The developer who <em>refuses to sit still.</em></h2>
+    <p>I'm Amit Kumar Dash — a B.Tech Computer Science student at College of Engineering BBSR, graduating in 2026. By day I architect APIs and wrangle databases. By weekend I'm hunting for the next scenic viewpoint in Odisha.</p>
+    <p>This blog is where both worlds collide. Tech deep-dives, honest travel stories, and the occasional life observation from a 20-year-old still figuring it all out.</p>
+    <div class="about-chips">
+      <span class="about-chip">Python</span>
+      <span class="about-chip">Django</span>
+      <span class="about-chip">ASP.NET</span>
+      <span class="about-chip">MongoDB</span>
+      <span class="about-chip">Bhubaneswar 📍</span>
+      <span class="about-chip">Photography 📷</span>
+      <span class="about-chip">Traveller ✈️</span>
+      <a href="https://github.com/iitamit" target="_blank" class="about-chip" style="text-decoration:none;color:inherit;">🐙 github.com/iitamit</a>
+      <a href="https://www.linkedin.com/in/amit-kumar-dash-638099271" target="_blank" class="about-chip" style="text-decoration:none;color:inherit;">🔗 LinkedIn</a>
+    </div>
+  </div>
+  <div class="about-right">
+    <div class="about-card">
+      <div class="about-card-icon">✍️</div>
+      <div class="about-card-num" id="dynamicPostCount">6</div>
+      <div class="about-card-label">POSTS</div>
+    </div>
+    <div class="about-card">
+      <div class="about-card-icon">✈️</div>
+      <div class="about-card-num">12</div>
+      <div class="about-card-label">DESTINATIONS</div>
+    </div>
+    <div class="about-card">
+      <div class="about-card-icon">💻</div>
+      <div class="about-card-num">3+</div>
+      <div class="about-card-label">PROJECTS</div>
+    </div>
+    <div class="about-card">
+      <div class="about-card-icon">☕</div>
+      <div class="about-card-num">∞</div>
+      <div class="about-card-label">COFFEES</div>
+    </div>
+  </div>
+</section>
+
+<!-- NEWSLETTER -->
+<div class="newsletter" id="contact-nl">
+  <div class="nl-label">Stay in the loop</div>
+  <h2 class="nl-title">Get the next post in your inbox.</h2>
+  <p class="nl-sub">No spam. Just travel stories, tech insights, and the occasional photo from a sunrise hike.</p>
+  <form class="nl-form" onsubmit="handleSubscribe(event)">
+    <input type="email" class="nl-input" placeholder="your@email.com" id="nlEmail">
+    <button type="submit" class="nl-btn">Subscribe</button>
+  </form>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-brand">
+    <h3>Amit's <span>Logbook</span></h3>
+    <p>A personal journal of code, travel & life from Bhubaneswar, Odisha. Written by Amit Kumar Dash.</p>
+  </div>
+  <div class="footer-col">
+    <h4>Explore</h4>
+    <ul>
+      <li><a href="#">Travel Stories</a></li>
+      <li><a href="#">Tech Posts</a></li>
+      <li><a href="#">Life & Thoughts</a></li>
+      <li><a href="#">Photo Gallery</a></li>
+    </ul>
+  </div>
+  <div class="footer-col">
+    <h4>Connect</h4>
+    <ul>
+      <li><a href="mailto:amitkumardash.a1@gmail.com">✉️ Email</a></li>
+      <li><a href="https://www.linkedin.com/in/amit-kumar-dash-638099271" target="_blank">🔗 LinkedIn ↗</a></li>
+      <li><a href="https://github.com/iitamit" target="_blank">🐙 GitHub ↗</a></li>
+      <li><a href="amit-portfolio.html">🤖 Portfolio ↗</a></li>
+    </ul>
+  </div>
+</footer>
+<div class="footer-bottom">
+  <p>© 2025 Amit Kumar Dash · Bhubaneswar, Odisha</p>
+  <p>Built with ❤️ and too much chai</p>
+</div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
+  <div class="modal" id="postModal">
+    <div class="modal-body">
+      <div id="modalContent"></div>
+      <button class="modal-close-btn" onclick="closeModalDirect()">← Back to Posts</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+// ===== BLOG DATA =====
+let posts = [
+  {
+    id: 1, cat: 'travel',
+    title: 'Lost in Puri: Where the Sea Meets the Soul',
+    excerpt: 'A weekend escape to Odisha\'s most iconic beach town turned into one of the most grounding experiences of my life. Here\'s what I found.',
+    content: `<p>There's something about the Bay of Bengal at 5 AM that strips away every layer of your city-shaped mind. I took the early morning bus from Bhubaneswar, laptop bag over my shoulder, half-asleep and fully unprepared for what Puri had in store.</p>
+    <p>The moment I stepped onto the sand at Golden Beach, I realized I hadn't taken a real breath in weeks. The Jagannath Temple gleaming in the distance, the fishermen already knee-deep in the surf — this wasn't just a weekend trip. This was a reset.</p>
+    <p>I spent two days wandering the narrow lanes of Puri town, eating chaat by the roadside, and watching sunsets that made me genuinely question why I spend so much time staring at a monitor. The sea doesn't care about your sprint deadline. And somehow, that's exactly what I needed to hear.</p>
+    <p>Pro tip: Skip the tourist-heavy stretches. Walk 2km north of the main beach. That's where the real Puri begins.</p>`,
+    emoji: '🌊', date: 'Mar 15, 2025', readTime: '5 min', location: 'Puri, Odisha'
+  },
+  {
+    id: 2, cat: 'tech',
+    title: 'Building Sahaj Tax AI: What I Learned About NLP the Hard Way',
+    excerpt: 'Six months into building an AI-powered ITR filing system, here are the real lessons — the ones nobody puts in the tutorial.',
+    content: `<p>When I started building Sahaj Tax AI, I thought the hard part was going to be the tax rules. I was wrong. The hard part was getting a language model to reliably parse a Form 16 when every CA firm seems to format them differently.</p>
+    <p>The first breakthrough came when I stopped treating document parsing as a pure NLP problem and started treating it as a data extraction problem with NLP as a tool. The distinction sounds subtle, but it completely changed the architecture.</p>
+    <p>We built a hybrid pipeline: rule-based extraction for structured sections, and a fine-tuned model for the messy human-written parts. The accuracy jumped from 67% to 89% overnight.</p>
+    <p>The biggest lesson? Tax compliance is not just a technical problem. Every rule has a sub-rule, every sub-rule has an exception, and the exceptions have exceptions. Building the compliance engine humbled me more than any competitive programming problem ever has.</p>`,
+    emoji: '🤖', date: 'Feb 28, 2025', readTime: '7 min', location: 'Bhubaneswar'
+  },
+  {
+    id: 3, cat: 'travel',
+    title: 'Chilika Lake at Dawn — A Photographer\'s Dream',
+    excerpt: 'Asia\'s largest brackish water lagoon is best experienced before the tourists arrive. I woke up at 4 AM so you know where to go.',
+    content: `<p>My alarm went off at 3:45 AM. Still worth it.</p>
+    <p>Chilika Lake stretches across 1,100 square kilometers, and at dawn it looks like someone spilled mercury across the earth. The mist sits low on the water. Fishing boats cut through it silently. If you listen carefully, the birds — over 160 migratory species in winter — create a sound that's honestly more complex than any Spotify playlist.</p>
+    <p>I drove down from Bhubaneswar the evening before, stayed at a small guesthouse in Barkul, and hired a local boatman named Babu who knew every inch of that lake. He took me to Nalaban Island where the flamingos gather, and I understood in that moment why people cry at National Geographic footage.</p>
+    <p>Camera settings if you're going: early morning, ISO 400, wide aperture, be patient. The lake rewards patience above all else.</p>`,
+    emoji: '🦩', date: 'Jan 20, 2025', readTime: '4 min', location: 'Chilika Lake, Odisha'
+  },
+  {
+    id: 4, cat: 'tech',
+    title: 'From Angular to React: A Honest Migration Story',
+    excerpt: 'We moved the Sahaj Tax AI frontend from Angular to React. Here\'s the messy, honest account of what broke and what didn\'t.',
+    content: `<p>The decision to migrate was not made in a vacuum. Our Angular setup was fine — Angular CLI, well-structured modules, TypeScript everywhere. But our team's collective experience with React was stronger, and for a solo-plus-one frontend project, that matters more than framework benchmarks.</p>
+    <p>The component migration itself was surprisingly smooth. Angular components map almost 1:1 to React functional components with hooks. The real pain was the routing — Angular's router is opinionated in ways React Router simply isn't.</p>
+    <p>What I didn't expect: the state management simplification. We went from ngrx (which was overkill for our use case) to Zustand, and the codebase became 30% smaller. When your state management library is simpler than your build tool, you know you made the right call.</p>
+    <p>Would I do it again? Yes. But I'd allocate 3x the time for testing, and 0x the time for convincing yourself it's going to be quick.</p>`,
+    emoji: '⚛️', date: 'Jan 8, 2025', readTime: '6 min', location: 'Bhubaneswar'
+  },
+  {
+    id: 5, cat: 'life',
+    title: 'What Six Months at Concentrix Taught Me About Humans',
+    excerpt: 'I joined as a temp SME. I left understanding empathy better than any CS course ever taught me.',
+    content: `<p>I took the Concentrix role as a bridge — something between college semesters that would pay for my laptop upgrade. I left with something I genuinely didn't expect: a deep respect for patience as a skill.</p>
+    <p>Every customer call is a small negotiation. Someone's internet is down and their work deadline is in an hour. Or their elderly parent can't figure out a device reset. The technical problem is almost always solvable. The human problem is what requires real skill.</p>
+    <p>I became an SME not because I was the smartest person on the floor, but because I was consistent. I showed up, I documented every edge case, and I shared what I knew. The junior associates started coming to me not for answers, but for a second opinion. That felt different from anything a git commit ever gave me.</p>
+    <p>The lesson I carry into every project now: the user doesn't care about your architecture. They care whether it works when they need it to.</p>`,
+    emoji: '🧑‍💼', date: 'Dec 5, 2024', readTime: '5 min', location: 'Bhubaneswar'
+  },
+  {
+    id: 6, cat: 'travel',
+    title: 'Konark Sun Temple: Engineering Carved in Stone',
+    excerpt: 'As a developer, visiting Konark felt like reading ancient source code. The precision is humbling.',
+    content: `<p>I went to Konark for the first time last October, and I haven't stopped thinking about it since. Not in a mystical way — in the way that any engineer feels when they encounter a problem solved with extraordinary elegance.</p>
+    <p>The Sun Temple at Konark was built in the 13th century. The entire structure is a giant sundial. The 24 wheels on its chariot base — each 3 meters in diameter — are calibrated to track time with a precision that modern visitors still use to tell the time of day from shadows. In the 13th century.</p>
+    <p>I spent four hours there. Most tourists spend forty minutes. If you go, find a guide who actually knows the astronomical significance of the wheel spokes. Not every guide does, but when you find one who does, it changes the entire experience.</p>
+    <p>The Nata Mandira's carvings alone are worth a separate afternoon. Bring sunscreen, a notebook, and leave your phone in your pocket more than you think you should.</p>`,
+    emoji: '🏛️', date: 'Oct 28, 2024', readTime: '6 min', location: 'Konark, Odisha'
+  }
+];
+
+// ===== RENDER BLOGS =====
+let currentFilter = 'all';
+
+function renderPosts() {
+  const grid = document.getElementById('blogGrid');
+  const filtered = currentFilter === 'all' ? posts : posts.filter(p => p.cat === currentFilter);
+
+  if (filtered.length === 0) {
+    grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:60px;color:var(--muted);">
+      <div style="font-size:40px;margin-bottom:12px;">📭</div>
+      <p style="font-family:'DM Mono',monospace;">No posts yet in this category.</p>
+    </div>`;
+    return;
+  }
+
+  grid.innerHTML = filtered.map(p => {
+    const catClass = p.cat === 'travel' ? 'cat-travel' : p.cat === 'tech' ? 'cat-tech' : 'cat-life';
+    const catLabel = p.cat === 'travel' ? '✈️ Travel' : p.cat === 'tech' ? '💻 Tech' : '🌿 Life';
+    const imgColors = {travel:'linear-gradient(135deg,#2D5016,#4A7C29,#8BC34A)', tech:'linear-gradient(135deg,#1A237E,#1565C0,#42A5F5)', life:'linear-gradient(135deg,#4E342E,#A1887F,#FFAB40)'};
+    return `
+    <div class="blog-card" onclick="openPost(${p.id})">
+      <div class="blog-img" style="background:${imgColors[p.cat]};">${p.emoji}</div>
+      <div class="blog-body">
+        <span class="blog-cat ${catClass}">${catLabel}</span>
+        <h3 class="blog-card-title">${p.title}</h3>
+        <p class="blog-excerpt">${p.excerpt}</p>
+        <div class="blog-meta">
+          <span>Amit Dash · ${p.date}</span>
+          <span class="read-time">${p.readTime} read →</span>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+
+  // update counts
+  document.getElementById('postCount').textContent = posts.length;
+  document.getElementById('dynamicPostCount').textContent = posts.length;
+}
+
+function filterPosts(cat, btn) {
+  currentFilter = cat;
+  document.querySelectorAll('.filter-tab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderPosts();
+}
+
+// ===== OPEN POST =====
+function openPost(id) {
+  const p = posts.find(x => x.id === id);
+  if (!p) return;
+  const catLabel = p.cat === 'travel' ? '✈️ Travel' : p.cat === 'tech' ? '💻 Tech' : '🌿 Life';
+  document.getElementById('modalContent').innerHTML = `
+    <div class="modal-tag">${catLabel} · ${p.location || 'India'}</div>
+    <h2 class="modal-title">${p.title}</h2>
+    <div class="modal-meta">
+      <span>✍️ Amit Kumar Dash</span>
+      <span>📅 ${p.date}</span>
+      <span>⏱ ${p.readTime} read</span>
+    </div>
+    <div class="modal-content">${p.content}</div>
+  `;
+  document.getElementById('modalOverlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeModal(e) {
+  if (e.target === document.getElementById('modalOverlay')) closeModalDirect();
+}
+function closeModalDirect() {
+  document.getElementById('modalOverlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+// ===== PUBLISH =====
+function publishPost() {
+  const title = document.getElementById('postTitle').value.trim();
+  const body = document.getElementById('postBody').value.trim();
+  const cat = document.getElementById('postCat').value;
+  if (!title || !body) { showToast('Please add a title and content!'); return; }
+
+  const icons = {travel:'✈️', tech:'💻', life:'🌿'};
+  const now = new Date();
+  const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const newPost = {
+    id: Date.now(), cat, title,
+    excerpt: body.slice(0, 120) + '...',
+    content: body.split('\n').filter(Boolean).map(l => `<p>${l}</p>`).join(''),
+    emoji: icons[cat],
+    date: `${months[now.getMonth()]} ${now.getDate()}, ${now.getFullYear()}`,
+    readTime: Math.max(1, Math.round(body.split(' ').length / 200)) + ' min',
+    location: 'Bhubaneswar'
+  };
+  posts.unshift(newPost);
+  document.getElementById('postTitle').value = '';
+  document.getElementById('postBody').value = '';
+  renderPosts();
+  showToast('🎉 Post published successfully!');
+  document.getElementById('blogs').scrollIntoView({behavior:'smooth'});
+}
+
+function formatText(type) {
+  const area = document.getElementById('postBody');
+  const map = {title:'# ', bold:'**bold**', italic:'*italic*', quote:'> ', code:'`code`', list:'- '};
+  area.value += (area.value ? '\n' : '') + map[type];
+  area.focus();
+}
+
+// ===== NEWSLETTER =====
+function handleSubscribe(e) {
+  e.preventDefault();
+  const email = document.getElementById('nlEmail').value;
+  if (!email) return;
+  showToast('🙌 You\'re subscribed! Next post coming soon.');
+  document.getElementById('nlEmail').value = '';
+}
+
+// ===== TOAST =====
+function showToast(msg) {
+  const t = document.getElementById('toast');

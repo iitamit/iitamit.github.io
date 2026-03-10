@@ -1,0 +1,800 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AMIT.DASH — Full Stack Developer</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&family=Exo+2:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --cyan: #00FFFF;
+  --green: #00FF88;
+  --blue: #0066FF;
+  --dark-blue: #000D1A;
+  --panel: rgba(0,255,255,0.04);
+  --border: rgba(0,255,255,0.15);
+  --text: #C8E6F5;
+  --dim: rgba(200,230,245,0.4);
+  --red: #FF3366;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+
+/* CURSOR */
+body { cursor: none; }
+.cursor {
+  position: fixed; width:16px; height:16px;
+  border:2px solid var(--cyan); border-radius:50%;
+  pointer-events:none; z-index:99999;
+  transform:translate(-50%,-50%);
+  transition:transform 0.1s, border-color 0.2s;
+  mix-blend-mode: difference;
+}
+.cursor-dot {
+  position:fixed; width:4px; height:4px;
+  background:var(--cyan); border-radius:50%;
+  pointer-events:none; z-index:99999;
+  transform:translate(-50%,-50%);
+}
+
+body {
+  font-family:'Exo 2', sans-serif;
+  background: var(--dark-blue);
+  color: var(--text);
+  overflow-x: hidden;
+}
+
+/* SCANLINES */
+body::before {
+  content:'';
+  position:fixed; inset:0;
+  background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,255,255,0.015) 2px, rgba(0,255,255,0.015) 4px);
+  pointer-events:none; z-index:1000;
+}
+
+/* ANIMATED GRID BG */
+.grid-bg {
+  position:fixed; inset:0; z-index:0;
+  background-image:
+    linear-gradient(rgba(0,255,255,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,255,255,0.04) 1px, transparent 1px);
+  background-size: 60px 60px;
+  animation: gridShift 20s linear infinite;
+}
+@keyframes gridShift {
+  0%{background-position:0 0;} 100%{background-position:60px 60px;}
+}
+
+/* NAV */
+nav {
+  position:fixed; top:0; width:100%; z-index:500;
+  padding:0 60px; height:64px;
+  display:flex; align-items:center; justify-content:space-between;
+  background: rgba(0,13,26,0.9);
+  backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--border);
+}
+.nav-logo {
+  font-family:'Orbitron',sans-serif; font-weight:900;
+  font-size:18px; letter-spacing:4px; color:var(--cyan);
+  text-decoration:none;
+}
+.nav-logo span { color:var(--green); }
+.nav-links { display:flex; gap:32px; list-style:none; }
+.nav-links a {
+  font-family:'Share Tech Mono',monospace; font-size:12px;
+  letter-spacing:2px; color:var(--dim); text-decoration:none;
+  transition:color 0.2s; position:relative;
+}
+.nav-links a::before {
+  content:'> '; color:var(--cyan); opacity:0; transition:opacity 0.2s;
+}
+.nav-links a:hover { color:var(--cyan); }
+.nav-links a:hover::before { opacity:1; }
+.status-dot {
+  width:8px; height:8px; border-radius:50%; background:var(--green);
+  box-shadow:0 0 8px var(--green);
+  animation: pulse 2s ease-in-out infinite;
+}
+@keyframes pulse { 0%,100%{opacity:1;} 50%{opacity:0.4;} }
+
+/* HERO */
+.hero {
+  min-height:100vh; padding:120px 60px 80px;
+  display:flex; align-items:center;
+  position:relative; overflow:hidden;
+}
+.hero-bg-glow {
+  position:absolute; top:20%; left:50%;
+  transform:translateX(-50%);
+  width:800px; height:400px;
+  background: radial-gradient(ellipse, rgba(0,102,255,0.12) 0%, transparent 60%);
+  pointer-events:none;
+}
+.hero-content { position:relative; z-index:2; max-width:700px; }
+
+.boot-text {
+  font-family:'Share Tech Mono',monospace; font-size:12px;
+  color:var(--green); letter-spacing:1px; margin-bottom:32px;
+  opacity:0; animation: fadeIn 0.5s ease 0.2s forwards;
+}
+.boot-text span { color:var(--dim); }
+
+.hero-title {
+  font-family:'Orbitron',sans-serif; font-weight:900;
+  font-size: clamp(48px, 7vw, 88px);
+  line-height:1; letter-spacing:4px; margin-bottom:8px;
+  opacity:0; animation:fadeInUp 0.7s ease 0.4s forwards;
+}
+.hero-title .name { color:var(--cyan); display:block; }
+.hero-title .dash-char { color:var(--green); }
+
+.hero-role {
+  font-family:'Share Tech Mono',monospace; font-size:18px;
+  color:var(--dim); letter-spacing:3px; margin-bottom:32px;
+  opacity:0; animation:fadeInUp 0.7s ease 0.6s forwards;
+}
+.hero-role .typing { color:var(--cyan); border-right:2px solid var(--cyan); animation:blink 1s step-end infinite; }
+@keyframes blink { 0%,100%{border-color:var(--cyan);} 50%{border-color:transparent;} }
+
+.hero-desc {
+  font-size:15px; line-height:1.8; color:var(--dim); max-width:520px;
+  margin-bottom:48px;
+  opacity:0; animation:fadeInUp 0.7s ease 0.8s forwards;
+}
+
+.hero-btns { display:flex; gap:16px; flex-wrap:wrap;
+  opacity:0; animation:fadeInUp 0.7s ease 1s forwards; }
+
+.btn-cyber {
+  position:relative; padding:12px 28px;
+  font-family:'Orbitron',sans-serif; font-weight:700;
+  font-size:12px; letter-spacing:3px; text-transform:uppercase;
+  text-decoration:none; border:none; cursor:pointer;
+  overflow:hidden; transition:all 0.3s;
+  clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px));
+}
+.btn-cyber-primary {
+  background:var(--cyan); color:var(--dark-blue);
+}
+.btn-cyber-primary:hover {
+  background:var(--green);
+  box-shadow: 0 0 30px rgba(0,255,136,0.5);
+}
+.btn-cyber-outline {
+  background:transparent; color:var(--cyan);
+  border:1px solid var(--cyan);
+}
+.btn-cyber-outline:hover {
+  background:rgba(0,255,255,0.08);
+  box-shadow: 0 0 20px rgba(0,255,255,0.2);
+}
+
+/* HEXAGON STATS */
+.hero-stats {
+  position:absolute; right:80px; top:50%; transform:translateY(-50%);
+  display:flex; flex-direction:column; gap:20px;
+  opacity:0; animation:fadeIn 1s ease 1.2s forwards;
+}
+.hex-stat {
+  background:var(--panel); border:1px solid var(--border);
+  padding:20px 24px; text-align:center;
+  clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px));
+  min-width:130px;
+}
+.hex-num {
+  font-family:'Orbitron',sans-serif; font-size:32px; font-weight:900;
+  color:var(--cyan); line-height:1;
+}
+.hex-label {
+  font-family:'Share Tech Mono',monospace; font-size:10px;
+  letter-spacing:2px; color:var(--dim); margin-top:4px;
+}
+
+@keyframes fadeInUp {
+  from{opacity:0;transform:translateY(24px);}
+  to{opacity:1;transform:translateY(0);}
+}
+@keyframes fadeIn { from{opacity:0;} to{opacity:1;} }
+
+/* SECTION */
+.section { padding:100px 60px; position:relative; z-index:2; }
+.section-tag {
+  font-family:'Share Tech Mono',monospace; font-size:11px;
+  letter-spacing:4px; color:var(--cyan); margin-bottom:12px;
+  display:flex; align-items:center; gap:12px;
+}
+.section-tag::before { content:'//'; color:var(--green); }
+.section-tag::after {
+  content:''; flex:1; max-width:80px; height:1px;
+  background:linear-gradient(90deg, var(--cyan), transparent);
+}
+.section-title {
+  font-family:'Orbitron',sans-serif; font-weight:900;
+  font-size: clamp(28px, 4vw, 42px); letter-spacing:3px;
+  color:var(--text); margin-bottom:60px;
+}
+
+/* SKILLS */
+.skills-grid {
+  display:grid; grid-template-columns:repeat(3,1fr); gap:20px;
+}
+.skill-panel {
+  background:var(--panel); border:1px solid var(--border);
+  padding:28px; position:relative; overflow:hidden;
+  clip-path: polygon(0 0, calc(100% - 16px) 0, 100% 16px, 100% 100%, 0 100%);
+  transition:border-color 0.3s, background 0.3s;
+}
+.skill-panel:hover {
+  border-color:var(--cyan);
+  background:rgba(0,255,255,0.06);
+  box-shadow:inset 0 0 30px rgba(0,255,255,0.04);
+}
+.skill-panel::after {
+  content:''; position:absolute; top:0; right:0;
+  width:0; height:0;
+  border-top:16px solid var(--cyan); border-left:16px solid transparent;
+  opacity:0.5;
+}
+.skill-icon { font-size:28px; margin-bottom:12px; }
+.skill-name {
+  font-family:'Orbitron',sans-serif; font-size:13px;
+  font-weight:700; letter-spacing:2px; color:var(--cyan);
+  margin-bottom:16px;
+}
+.skill-tags { display:flex; flex-wrap:wrap; gap:6px; }
+.skill-tag {
+  font-family:'Share Tech Mono',monospace; font-size:10px;
+  padding:3px 10px; border:1px solid rgba(0,255,255,0.2);
+  color:var(--dim); letter-spacing:1px;
+  transition:all 0.2s;
+}
+.skill-tag:hover {
+  border-color:var(--cyan); color:var(--cyan);
+  background:rgba(0,255,255,0.06);
+}
+
+/* EXPERIENCE TIMELINE */
+.timeline { position:relative; padding-left:40px; }
+.timeline::before {
+  content:''; position:absolute; left:0; top:0; bottom:0;
+  width:2px; background:linear-gradient(180deg, var(--cyan), var(--blue), transparent);
+}
+.timeline-item {
+  position:relative; margin-bottom:48px;
+  opacity:0; transform:translateX(-20px);
+  animation:slideIn 0.6s ease forwards;
+}
+.timeline-item:nth-child(1){ animation-delay:0.1s; }
+.timeline-item:nth-child(2){ animation-delay:0.3s; }
+@keyframes slideIn {
+  to{opacity:1;transform:translateX(0);}
+}
+.timeline-dot {
+  position:absolute; left:-46px; top:8px;
+  width:14px; height:14px; border:2px solid var(--cyan);
+  background:var(--dark-blue); border-radius:50%;
+  box-shadow:0 0 12px var(--cyan);
+}
+.timeline-card {
+  background:var(--panel); border:1px solid var(--border);
+  padding:28px 32px;
+  clip-path:polygon(0 0, calc(100% - 20px) 0, 100% 20px, 100% 100%, 0 100%);
+  transition:border-color 0.3s;
+}
+.timeline-card:hover { border-color:rgba(0,255,255,0.4); }
+.timeline-header { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:8px; flex-wrap:wrap; gap:8px; }
+.timeline-role {
+  font-family:'Orbitron',sans-serif; font-size:16px; font-weight:700;
+  color:var(--cyan); letter-spacing:2px;
+}
+.timeline-date {
+  font-family:'Share Tech Mono',monospace; font-size:11px;
+  color:var(--green); padding:4px 12px;
+  border:1px solid rgba(0,255,136,0.3); letter-spacing:1px;
+}
+.timeline-company {
+  font-family:'Share Tech Mono',monospace; font-size:13px;
+  color:var(--dim); margin-bottom:16px; letter-spacing:1px;
+}
+.timeline-items { list-style:none; }
+.timeline-items li {
+  font-size:13px; color:var(--dim); line-height:1.7; margin-bottom:6px;
+  padding-left:20px; position:relative;
+}
+.timeline-items li::before {
+  content:'▶'; position:absolute; left:0;
+  color:var(--cyan); font-size:8px; top:4px;
+}
+
+/* PROJECTS */
+.projects-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:24px; }
+.project-card {
+  background:var(--panel); border:1px solid var(--border);
+  padding:28px; position:relative; overflow:hidden;
+  clip-path:polygon(0 0, calc(100% - 20px) 0, 100% 20px, 100% 100%, 20px 100%, 0 calc(100% - 20px));
+  transition:all 0.3s; cursor:pointer;
+}
+.project-card::before {
+  content:''; position:absolute; inset:0;
+  background:linear-gradient(135deg, transparent 60%, rgba(0,255,255,0.04));
+  pointer-events:none;
+}
+.project-card:hover {
+  border-color:var(--cyan);
+  transform:translateY(-6px);
+  box-shadow:0 20px 40px rgba(0,0,0,0.5), 0 0 20px rgba(0,255,255,0.1);
+}
+.project-num {
+  font-family:'Orbitron',sans-serif; font-size:48px; font-weight:900;
+  color:rgba(0,255,255,0.08); position:absolute; top:16px; right:20px;
+  line-height:1;
+}
+.project-label {
+  font-family:'Share Tech Mono',monospace; font-size:10px;
+  color:var(--green); letter-spacing:3px; margin-bottom:8px;
+}
+.project-name {
+  font-family:'Orbitron',sans-serif; font-size:16px; font-weight:700;
+  color:var(--text); letter-spacing:2px; margin-bottom:12px; line-height:1.3;
+}
+.project-desc {
+  font-size:12px; color:var(--dim); line-height:1.7; margin-bottom:20px;
+}
+.project-tech { display:flex; flex-wrap:wrap; gap:6px; }
+.tech-chip {
+  font-family:'Share Tech Mono',monospace; font-size:9px;
+  padding:3px 10px; background:rgba(0,102,255,0.12);
+  border:1px solid rgba(0,102,255,0.3); color:#6B9FFF;
+  letter-spacing:1px;
+}
+
+/* EDUCATION */
+.edu-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:20px; }
+.edu-card {
+  background:var(--panel); border:1px solid var(--border);
+  padding:28px 24px; text-align:center;
+  clip-path:polygon(0 0, 100% 0, 100% calc(100% - 16px), calc(100% - 16px) 100%, 0 100%);
+  transition:all 0.3s;
+}
+.edu-card:hover { border-color:var(--cyan); background:rgba(0,255,255,0.04); }
+.edu-level {
+  font-family:'Orbitron',sans-serif; font-size:11px; font-weight:700;
+  letter-spacing:3px; color:var(--cyan); margin-bottom:12px;
+}
+.edu-name { font-size:14px; color:var(--text); margin-bottom:6px; font-weight:600; line-height:1.3; }
+.edu-institute { font-family:'Share Tech Mono',monospace; font-size:11px; color:var(--dim); margin-bottom:12px; }
+.edu-score {
+  font-family:'Orbitron',sans-serif; font-size:22px; font-weight:900;
+  color:var(--green);
+}
+.edu-year { font-family:'Share Tech Mono',monospace; font-size:10px; color:var(--dim); letter-spacing:1px; }
+
+/* CONTACT */
+.contact-grid { display:grid; grid-template-columns:1fr 1fr; gap:60px; align-items:start; }
+.contact-info { display:flex; flex-direction:column; gap:16px; }
+.contact-item {
+  display:flex; align-items:center; gap:16px;
+  padding:16px 20px; background:var(--panel); border:1px solid var(--border);
+  transition:all 0.2s; text-decoration:none;
+}
+.contact-item:hover { border-color:var(--cyan); background:rgba(0,255,255,0.06); }
+.contact-icon { font-size:20px; width:32px; text-align:center; }
+.contact-text { font-family:'Share Tech Mono',monospace; font-size:12px; color:var(--dim); letter-spacing:1px; }
+.contact-text strong { display:block; color:var(--cyan); font-size:10px; letter-spacing:3px; margin-bottom:4px; }
+
+/* TERMINAL */
+.terminal {
+  background:#000; border:1px solid var(--border);
+  padding:24px; font-family:'Share Tech Mono',monospace;
+  clip-path:polygon(0 0, calc(100% - 16px) 0, 100% 16px, 100% 100%, 0 100%);
+}
+.terminal-bar {
+  display:flex; align-items:center; gap:8px; margin-bottom:20px;
+  padding-bottom:16px; border-bottom:1px solid var(--border);
+}
+.t-dot { width:10px; height:10px; border-radius:50%; }
+.t-title { font-size:11px; color:var(--dim); letter-spacing:2px; margin-left:8px; }
+.terminal-line { font-size:12px; margin-bottom:8px; line-height:1.6; }
+.t-prompt { color:var(--green); }
+.t-cmd { color:var(--cyan); }
+.t-output { color:var(--dim); padding-left:16px; }
+.t-success { color:var(--green); }
+.t-highlight { color:var(--cyan); }
+
+/* FOOTER */
+footer {
+  border-top:1px solid var(--border); padding:40px 60px;
+  display:flex; justify-content:space-between; align-items:center;
+  background:rgba(0,0,0,0.4); position:relative; z-index:2;
+  flex-wrap:wrap; gap:16px;
+}
+.footer-logo { font-family:'Orbitron',sans-serif; font-size:16px; font-weight:900; color:var(--cyan); letter-spacing:4px; }
+.footer-copy { font-family:'Share Tech Mono',monospace; font-size:11px; color:var(--dim); }
+
+/* SCROLL INDICATOR */
+.scroll-line {
+  position:fixed; right:24px; top:50%; transform:translateY(-50%);
+  width:2px; height:100px; background:rgba(0,255,255,0.1); z-index:50;
+}
+.scroll-progress {
+  width:100%; background:var(--cyan);
+  box-shadow:0 0 8px var(--cyan);
+  transition:height 0.1s;
+}
+
+/* RESPONSIVE */
+@media(max-width:1024px){
+  .skills-grid{grid-template-columns:repeat(2,1fr);}
+  .projects-grid{grid-template-columns:repeat(2,1fr);}
+  .hero-stats{display:none;}
+}
+@media(max-width:768px){
+  nav{padding:0 20px;}
+  .nav-links{display:none;}
+  .hero{padding:100px 24px 60px;}
+  .section{padding:60px 24px;}
+  .skills-grid{grid-template-columns:1fr;}
+  .projects-grid{grid-template-columns:1fr;}
+  .edu-grid{grid-template-columns:1fr;}
+  .contact-grid{grid-template-columns:1fr;}
+  footer{padding:24px;}
+}
+</style>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+<div class="cursor-dot" id="cursorDot"></div>
+<div class="grid-bg"></div>
+<div class="scroll-line"><div class="scroll-progress" id="scrollProgress"></div></div>
+
+<!-- NAV -->
+<nav>
+  <a href="#home" class="nav-logo">AMIT<span>.DASH</span></a>
+  <ul class="nav-links">
+    <li><a href="#skills">Skills</a></li>
+    <li><a href="#experience">Experience</a></li>
+    <li><a href="#projects">Projects</a></li>
+    <li><a href="#education">Education</a></li>
+    <li><a href="#contact">Contact</a></li>
+    <li><a href="https://github.com/iitamit" target="_blank" style="color:var(--green);">GitHub ↗</a></li>
+    <li><a href="https://www.linkedin.com/in/amit-kumar-dash-638099271" target="_blank" style="color:var(--cyan);">LinkedIn ↗</a></li>
+  </ul>
+  <div class="status-dot" title="Available for opportunities"></div>
+</nav>
+
+<!-- HERO -->
+<section class="hero" id="home">
+  <div class="hero-bg-glow"></div>
+  <div class="hero-content">
+    <div class="boot-text">
+      [ SYSTEM BOOT ] <span>INITIALIZING PORTFOLIO v2025.1 ...</span>
+      <span style="color:var(--green);">✓ ALL SYSTEMS ONLINE</span>
+    </div>
+    <h1 class="hero-title">
+      <span class="name">AMIT KUMAR</span>
+      <span>DASH<span class="dash-char">_</span></span>
+    </h1>
+    <div class="hero-role">
+      // <span class="typing" id="typingText">FULL STACK DEVELOPER</span>
+    </div>
+    <p class="hero-desc">
+      Professional software developer architecting scalable web applications with Python, Django, ASP.NET & Java. 
+      Expertise in full software lifecycle development with clean, efficient code and high-quality delivery.
+    </p>
+    <div class="hero-btns">
+      <a href="#projects" class="btn-cyber btn-cyber-primary">VIEW PROJECTS</a>
+      <a href="https://github.com/iitamit" target="_blank" class="btn-cyber btn-cyber-outline">GITHUB ↗</a>
+      <a href="#contact" class="btn-cyber btn-cyber-outline">INITIATE CONTACT</a>
+    </div>
+  </div>
+  <div class="hero-stats">
+    <div class="hex-stat">
+      <div class="hex-num">8.1</div>
+      <div class="hex-label">CGPA</div>
+    </div>
+    <div class="hex-stat">
+      <div class="hex-num">3+</div>
+      <div class="hex-label">PROJECTS</div>
+    </div>
+    <div class="hex-stat">
+      <div class="hex-num">2+</div>
+      <div class="hex-label">EXPERIENCE</div>
+    </div>
+    <div class="hex-stat">
+      <div class="hex-num">5+</div>
+      <div class="hex-label">TECH STACKS</div>
+    </div>
+  </div>
+</section>
+
+<!-- SKILLS -->
+<section class="section" id="skills">
+  <div class="section-tag">MODULE_01</div>
+  <h2 class="section-title">TECHNICAL SKILLS</h2>
+  <div class="skills-grid">
+    <div class="skill-panel">
+      <div class="skill-icon">⚡</div>
+      <div class="skill-name">LANGUAGES</div>
+      <div class="skill-tags">
+        <span class="skill-tag">Python</span>
+        <span class="skill-tag">Java</span>
+        <span class="skill-tag">C#</span>
+        <span class="skill-tag">JavaScript</span>
+      </div>
+    </div>
+    <div class="skill-panel">
+      <div class="skill-icon">🌐</div>
+      <div class="skill-name">WEB FRAMEWORKS</div>
+      <div class="skill-tags">
+        <span class="skill-tag">Django</span>
+        <span class="skill-tag">ASP.NET</span>
+        <span class="skill-tag">Angular CLI</span>
+        <span class="skill-tag">React</span>
+        <span class="skill-tag">Bootstrap</span>
+      </div>
+    </div>
+    <div class="skill-panel">
+      <div class="skill-icon">🗄️</div>
+      <div class="skill-name">DATABASES</div>
+      <div class="skill-tags">
+        <span class="skill-tag">MongoDB</span>
+        <span class="skill-tag">MS SQL Server</span>
+        <span class="skill-tag">Stored Procs</span>
+      </div>
+    </div>
+    <div class="skill-panel">
+      <div class="skill-icon">🔧</div>
+      <div class="skill-name">DEV TOOLS</div>
+      <div class="skill-tags">
+        <span class="skill-tag">VS Code</span>
+        <span class="skill-tag">Visual Studio</span>
+        <span class="skill-tag">Postman</span>
+        <span class="skill-tag">GitHub</span>
+        <span class="skill-tag">Jira</span>
+      </div>
+    </div>
+    <div class="skill-panel">
+      <div class="skill-icon">🏗️</div>
+      <div class="skill-name">ARCHITECTURE</div>
+      <div class="skill-tags">
+        <span class="skill-tag">MVC Pattern</span>
+        <span class="skill-tag">N-Tier</span>
+        <span class="skill-tag">RESTful API</span>
+        <span class="skill-tag">AI/NLP</span>
+      </div>
+    </div>
+    <div class="skill-panel">
+      <div class="skill-icon">💡</div>
+      <div class="skill-name">SOFT SKILLS</div>
+      <div class="skill-tags">
+        <span class="skill-tag">Team Leadership</span>
+        <span class="skill-tag">Problem Solving</span>
+        <span class="skill-tag">Quick Learner</span>
+        <span class="skill-tag">Agile/Scrum</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- EXPERIENCE -->
+<section class="section" id="experience" style="background:rgba(0,0,10,0.4);">
+  <div class="section-tag">MODULE_02</div>
+  <h2 class="section-title">WORK EXPERIENCE</h2>
+  <div class="timeline">
+    <div class="timeline-item">
+      <div class="timeline-dot"></div>
+      <div class="timeline-card">
+        <div class="timeline-header">
+          <div class="timeline-role">SOFTWARE DEVELOPER INTERN</div>
+          <div class="timeline-date">JUN 2024 — JUL 2024</div>
+        </div>
+        <div class="timeline-company">◈ Asteris Solutions Pvt. Ltd · Bhubaneswar, Odisha</div>
+        <ul class="timeline-items">
+          <li>Designed responsive UIs using Angular CLI, Angular Material & Bootstrap for seamless UX</li>
+          <li>Backend implementation & API integration using ASP.NET and C# for scalable application logic</li>
+          <li>Database management — designing schemas & executing queries in Microsoft SQL Server</li>
+          <li>Sprint tracking & task management with Jira; API testing & debugging via Postman</li>
+          <li>Participated in code reviews adhering to best practices in collaborative development</li>
+        </ul>
+      </div>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-dot"></div>
+      <div class="timeline-card">
+        <div class="timeline-header">
+          <div class="timeline-role">TEMP SME — OPERATIONS</div>
+          <div class="timeline-date">OCT 2024 — DEC 2025</div>
+        </div>
+        <div class="timeline-company">◈ Concentrix · Bhubaneswar</div>
+        <ul class="timeline-items">
+          <li>Diagnosed & resolved complex technical issues ensuring high-quality customer service delivery</li>
+          <li>Acted as Subject Matter Expert (SME) to mentor junior associates on technical troubleshooting</li>
+          <li>CRM & ticketing tool management for tracking and resolving customer queries effectively</li>
+          <li>Handled escalations requiring in-depth technical analysis and critical resolution under SLAs</li>
+          <li>Identified process gaps & implemented efficient technical solutions with cross-team collaboration</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROJECTS -->
+<section class="section" id="projects">
+  <div class="section-tag">MODULE_03</div>
+  <h2 class="section-title">PROJECTS</h2>
+  <div class="projects-grid">
+    <div class="project-card">
+      <div class="project-num">01</div>
+      <div class="project-label">FULL STACK · TEAM PROJECT</div>
+      <div class="project-name">CAFE MANAGEMENT SYSTEM</div>
+      <p class="project-desc">Comprehensive solution for daily cafe operations. Modules include Order Management, Inventory, Billing, Kitchen Display System (KDS), and Customer Management — ensuring seamless coordination between front-end service and kitchen.</p>
+      <div class="project-tech">
+        <span class="tech-chip">Angular CLI</span>
+        <span class="tech-chip">ASP.NET Web API</span>
+        <span class="tech-chip">C#</span>
+        <span class="tech-chip">SQL Server</span>
+        <span class="tech-chip">Postman</span>
+        <span class="tech-chip">Jira</span>
+        <span class="tech-chip">Git</span>
+      </div>
+    </div>
+    <div class="project-card">
+      <div class="project-num">02</div>
+      <div class="project-label">FULL STACK · SOLO PROJECT</div>
+      <div class="project-name">E-CREAM SITE</div>
+      <p class="project-desc">Complete e-commerce platform for an ice-cream brand. Features User Authentication, Product Catalog, Shopping Cart Management & Order Processing. Fully responsive UI with a MongoDB NoSQL backend built independently end-to-end.</p>
+      <div class="project-tech">
+        <span class="tech-chip">Python</span>
+        <span class="tech-chip">MongoDB</span>
+        <span class="tech-chip">Bootstrap</span>
+        <span class="tech-chip">VS Code</span>
+      </div>
+    </div>
+    <div class="project-card">
+      <div class="project-num">03</div>
+      <div class="project-label">BACKEND · AI PROJECT · ONGOING</div>
+      <div class="project-name">SAHAJ TAX AI</div>
+      <p class="project-desc">AI-powered web app automating Indian ITR filing. Uses AI/NLP for intelligent document parsing & data extraction. Features guided filing chatbot and rule-based compliance engine with robust data security measures.</p>
+      <div class="project-tech">
+        <span class="tech-chip">Python</span>
+        <span class="tech-chip">AI/NLP</span>
+        <span class="tech-chip">React</span>
+        <span class="tech-chip">Rule Engine</span>
+        <span class="tech-chip">Document AI</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- EDUCATION -->
+<section class="section" id="education" style="background:rgba(0,0,10,0.4);">
+  <div class="section-tag">MODULE_04</div>
+  <h2 class="section-title">EDUCATION LOG</h2>
+  <div class="edu-grid">
+    <div class="edu-card">
+      <div class="edu-level">B.TECH</div>
+      <div class="edu-name">Computer Science Engineering</div>
+      <div class="edu-institute">College of Engineering BBSR<br>BPUT, Odisha</div>
+      <div class="edu-score">8.10</div>
+      <div class="edu-year">CGPA · 2026 (Expected)</div>
+    </div>
+    <div class="edu-card">
+      <div class="edu-level">12TH — HSC</div>
+      <div class="edu-name">Higher Secondary Certificate</div>
+      <div class="edu-institute">Gyana Bharati Institute of Technology<br>CHSE, Odisha</div>
+      <div class="edu-score">70%</div>
+      <div class="edu-year">YEAR · 2022</div>
+    </div>
+    <div class="edu-card">
+      <div class="edu-level">10TH — SSC</div>
+      <div class="edu-name">Secondary School Certificate</div>
+      <div class="edu-institute">Shri Jayadev Sikhsha Kendra<br>HSE, Odisha</div>
+      <div class="edu-score">70%</div>
+      <div class="edu-year">YEAR · 2020</div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section class="section" id="contact">
+  <div class="section-tag">MODULE_05</div>
+  <h2 class="section-title">INITIATE CONTACT</h2>
+  <div class="contact-grid">
+    <div class="contact-info">
+      <a href="/cdn-cgi/l/email-protection#90f1fdf9e4fbe5fdf1e2f4f1e3f8bef1a1d0f7fdf1f9fcbef3fffd" class="contact-item">
+        <span class="contact-icon">📧</span>
+        <div class="contact-text"><strong>EMAIL</strong><span class="__cf_email__" data-cfemail="1c7d7175687769717d6e787d6f74327d2d5c7b717d7570327f7371">[email&#160;protected]</span></div>
+      </a>
+      <a href="tel:+919692254587" class="contact-item">
+        <span class="contact-icon">📱</span>
+        <div class="contact-text"><strong>MOBILE</strong>+91 9692254587</div>
+      </a>
+      <div class="contact-item">
+        <span class="contact-icon">📍</span>
+        <div class="contact-text"><strong>LOCATION</strong>Bhubaneswar, Odisha — 751024, India</div>
+      </div>
+      <a href="https://github.com/iitamit" target="_blank" class="contact-item">
+        <span class="contact-icon">🐙</span>
+        <div class="contact-text"><strong>GITHUB</strong>github.com/iitamit</div>
+      </a>
+      <a href="https://www.linkedin.com/in/amit-kumar-dash-638099271" target="_blank" class="contact-item">
+        <span class="contact-icon">🔗</span>
+        <div class="contact-text"><strong>LINKEDIN</strong>linkedin.com/in/amit-kumar-dash-638099271</div>
+      </a>
+      <div class="contact-item">
+        <span class="contact-icon">🌐</span>
+        <div class="contact-text"><strong>LANGUAGES</strong>English · Hindi · Odia</div>
+      </div>
+    </div>
+    <div class="terminal">
+      <div class="terminal-bar">
+        <div class="t-dot" style="background:#FF5F56;"></div>
+        <div class="t-dot" style="background:#FEBC2E;"></div>
+        <div class="t-dot" style="background:#28C840;"></div>
+        <span class="t-title">TERMINAL — amit@portfolio:~</span>
+      </div>
+      <div class="terminal-line"><span class="t-prompt">amit@portfolio:~$</span> <span class="t-cmd">whoami</span></div>
+      <div class="terminal-line t-output">Full Stack Developer | B.Tech CSE 2026 | Bhubaneswar</div>
+      <div class="terminal-line"><span class="t-prompt">amit@portfolio:~$</span> <span class="t-cmd">cat skills.txt</span></div>
+      <div class="terminal-line t-output"><span class="t-highlight">Python</span> · <span class="t-highlight">Django</span> · <span class="t-highlight">ASP.NET</span> · <span class="t-highlight">C#</span> · <span class="t-highlight">Java</span></div>
+      <div class="terminal-line t-output"><span class="t-highlight">Angular</span> · <span class="t-highlight">React</span> · <span class="t-highlight">MongoDB</span> · <span class="t-highlight">SQL Server</span></div>
+      <div class="terminal-line"><span class="t-prompt">amit@portfolio:~$</span> <span class="t-cmd">cat links.txt</span></div>
+      <div class="terminal-line t-output">🐙 <a href="https://github.com/iitamit" target="_blank" style="color:var(--cyan);text-decoration:none;">github.com/iitamit</a></div>
+      <div class="terminal-line t-output">🔗 <a href="https://www.linkedin.com/in/amit-kumar-dash-638099271" target="_blank" style="color:var(--cyan);text-decoration:none;">linkedin.com/in/amit-kumar-dash-638099271</a></div>
+      <div class="terminal-line t-output">🔭 Exploring New Technologies</div>
+      <div class="terminal-line t-output">✈️ Travelling & Photography</div>
+      <div class="terminal-line t-output">🌐 Web Surfing & Tech Research</div>
+      <div class="terminal-line"><span class="t-prompt">amit@portfolio:~$</span> <span class="t-cmd">echo $STATUS</span></div>
+      <div class="terminal-line t-success">✓ OPEN TO OPPORTUNITIES — 2025/2026</div>
+      <div class="terminal-line"><span class="t-prompt">amit@portfolio:~$</span> <span class="t-cmd" id="blink-cursor">█</span></div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-logo">AMIT.DASH_</div>
+  <div class="footer-copy">// © 2025 Amit Kumar Dash · Built with passion in Bhubaneswar</div>
+</footer>
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+// CURSOR
+const cursor = document.getElementById('cursor');
+const dot = document.getElementById('cursorDot');
+document.addEventListener('mousemove', e => {
+  cursor.style.left = e.clientX + 'px';
+  cursor.style.top = e.clientY + 'px';
+  dot.style.left = e.clientX + 'px';
+  dot.style.top = e.clientY + 'px';
+});
+document.querySelectorAll('a,button,.project-card,.skill-panel').forEach(el => {
+  el.addEventListener('mouseenter', () => {
+    cursor.style.transform = 'translate(-50%,-50%) scale(2)';
+    cursor.style.borderColor = 'var(--green)';
+  });
+  el.addEventListener('mouseleave', () => {
+    cursor.style.transform = 'translate(-50%,-50%) scale(1)';
+    cursor.style.borderColor = 'var(--cyan)';
+  });
+});
+
+// SCROLL PROGRESS
+window.addEventListener('scroll', () => {
+  const h = document.documentElement.scrollHeight - window.innerHeight;
+  const pct = (window.scrollY / h) * 100;
+  document.getElementById('scrollProgress').style.height = pct + '%';
+});
+
+// TYPING EFFECT
+const roles = ['FULL STACK DEVELOPER', 'BACKEND ENGINEER', 'PYTHON DEVELOPER', 'API ARCHITECT', 'PROBLEM SOLVER'];
+let ri = 0, ci = 0, deleting = false;
+const el = document.getElementById('typingText');
+function type() {
+  const cur = roles[ri];
+  if (!deleting) {
+    el.textContent = cur.slice(0, ++ci);
+    if (ci === cur.length) { deleting = true; setTimeout(type, 2000); return; }
+  } else {
+    el.textContent = cur.slice(0, --ci);
+    if (ci === 0) { deleting = false; ri = (ri + 1) % roles.l
